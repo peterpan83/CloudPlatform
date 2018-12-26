@@ -19,7 +19,6 @@ class Cprotocol:
     '''
     m_SendBuf = []
     m_ulAddress = 1
-    pan_speed = DEFAULT_PAN_SPEED
     def __init__(self,pPort,pLen):
         self.pPort = pPort
         self.pLen = pLen
@@ -100,20 +99,20 @@ class CprotocolD(Cprotocol):
             result.append(hex(i))
         return result
 
-    def left(self,secs=0):
+    def left(self,secs=0,pan_speed=DEFAULT_PAN_SPEED):
         self.mereset()
         self.m_SendBuf[3] = 4
-        self.m_SendBuf[4] = self.pan_speed
+        self.m_SendBuf[4] = pan_speed
         self.send()
         time.sleep(secs)
         self.mereset()
         self.send()
 
 
-    def right(self,secs=0):
+    def right(self,secs=0,pan_speed=DEFAULT_PAN_SPEED):
         self.mereset()
         self.m_SendBuf[3] = 2
-        self.m_SendBuf[4] = self.pan_speed
+        self.m_SendBuf[4] = pan_speed
         self.send()
         # print(DEFAULT_PAN_SPEED)
         time.sleep(secs)
