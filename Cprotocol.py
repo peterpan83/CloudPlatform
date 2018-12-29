@@ -7,6 +7,7 @@
 
 DEFAULT_PAN_SPEED = 10 # 0.15度/speed
 DEFAULT_TILT_SPEED = 2
+PAN_SPEED_DEGREE = 0.15
 
 import abc
 import serial

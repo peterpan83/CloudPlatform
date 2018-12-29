@@ -128,7 +128,7 @@ class CloudPlatform():
         if self.currentHorizon-self.AzimuthSensorIni >= 180:
             self.pan_speed = 30
             # 先左转180度,为了防止总是往一个方向转，线发生线缠绕的情况
-            secs = 180 / (self.pan_speed * 0.15)
+            secs = 180 / (self.pan_speed * Cprotocol.PAN_SPEED_DEGREE)
             self.protocolD.left(secs,self.pan_speed)
             # print('左转了%d秒'%(secs))
         self.protocolD.resetHorizon()
@@ -144,9 +144,9 @@ class CloudPlatform():
         self.pan_speed = Cprotocol.DEFAULT_PAN_SPEED
         if abs(self.AzimuthSensorIni) > 10:
             self.pan_speed = 30
-        secs = abs(self.AzimuthSensorIni)/(self.pan_speed*0.15)
+        secs = abs(self.AzimuthSensorIni)/(self.pan_speed*Cprotocol.PAN_SPEED_DEGREE)
         print("%s" % (datetime.now()))
-        print('当前HyperSAS方位：%.2f,按当前速度%.3f/s,至正北需%s转%.3f秒。' % (self.AzimuthSensorIni, self.pan_speed*0.15, "左" if self.AzimuthSensorIni>0 else "右",secs))
+        print('当前HyperSAS方位：%.2f,按当前速度%.3f/s,至正北需%s转%.3f秒。' % (self.AzimuthSensorIni, self.pan_speed*Cprotocol.PAN_SPEED_DEGREE, "左" if self.AzimuthSensorIni>0 else "右",secs))
         if self.AzimuthSensorIni > 0:
             self.protocolD.left(secs,self.pan_speed)
         else:
@@ -197,10 +197,10 @@ class CloudPlatform():
             else:
                 self.pan_speed = Cprotocol.DEFAULT_PAN_SPEED
 
-            secs = AzimuthSensor / (self.pan_speed * 0.15)  ##当前平台的方位角与太阳的方位角之差，在当前速度下所需时间
+            secs = AzimuthSensor / (self.pan_speed * Cprotocol.PAN_SPEED_DEGREE)  ##当前平台的方位角与太阳的方位角之差，在当前速度下所需时间
 
             print('当前HyperSAS方位：%.2f,太阳方位：%.2f,角度差：%.2f,按当前速度%.3f/s,需右转%.3f秒。'
-                  % (self.currentHorizon, sa, AzimuthSensor, self.pan_speed * 0.15, secs))
+                  % (self.currentHorizon, sa, AzimuthSensor, self.pan_speed * Cprotocol.PAN_SPEED_DEGREE, secs))
             self.protocolD.right(secs,pan_speed=self.pan_speed)
             self.currentHorizon = AzimuthSensor
 
@@ -235,10 +235,10 @@ class CloudPlatform():
         if abs(delta) > 10:
             self.pan_speed = 30
 
-        secs = delta / (self.pan_speed * 0.15)  ##当前平台的方位角与太阳的方位角之差，在当前速度下所需时间
+        secs = delta / (self.pan_speed * Cprotocol.PAN_SPEED_DEGREE)  ##当前平台的方位角与太阳的方位角之差，在当前速度下所需时间
 
         print('当前HyperSAS方位：%.2f,太阳方位：%.2f,理想方位：%.2f,角度差：%.2f,按当前速度%.3f/s,需%s转%.3f秒。'
-              % (self.currentHorizon, sa,AzimuthSensor, delta, self.pan_speed*0.15, "左" if delta<0 else "右",secs))
+              % (self.currentHorizon, sa,AzimuthSensor, delta, self.pan_speed*Cprotocol.PAN_SPEED_DEGREE, "左" if delta<0 else "右",secs))
         if delta <0: #左转
             self.protocolD.left(secs,pan_speed=self.pan_speed)
         else:
