@@ -145,6 +145,8 @@ class CloudPlatform():
         if abs(self.AzimuthSensorIni) > 10:
             self.pan_speed = 30
         secs = abs(self.AzimuthSensorIni)/(self.pan_speed*0.15)
+        print("%s" % (datetime.now()))
+        print('当前HyperSAS方位：%.2f,按当前速度%.3f/s,至正北需%s转%.3f秒。' % (self.AzimuthSensorIni, self.pan_speed*0.15, "左" if self.AzimuthSensorIni>0 else "右",secs))
         if self.AzimuthSensorIni > 0:
             self.protocolD.left(secs,self.pan_speed)
         else:
@@ -232,8 +234,7 @@ class CloudPlatform():
         delta = AzimuthSensor-self.currentHorizon
         if abs(delta) > 10:
             self.pan_speed = 30
-        else:
-            self.pan_speed = self.speed
+
         secs = delta / (self.pan_speed * 0.15)  ##当前平台的方位角与太阳的方位角之差，在当前速度下所需时间
 
         print('当前HyperSAS方位：%.2f,太阳方位：%.2f,理想方位：%.2f,角度差：%.2f,按当前速度%.3f/s,需%s转%.3f秒。'
