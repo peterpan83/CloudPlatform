@@ -251,6 +251,9 @@ class CloudPlatform():
         self.starthour = int(start.split(':')[0])
         self.endhour = int(end.split(':')[0])
 
+    def setResettime(self,hour,min):
+        self.resethour,self.resetmin = hour,min
+
     def do(self,action):
         try:
             if action == Eaction.left.value:
@@ -281,7 +284,7 @@ def autoRun(pCloudPlatform):
     scheduler = BlockingScheduler()
     print('开始时间%d点，结束时间%d点'%(pCloudPlatform.starthour,pCloudPlatform.endhour))
     scheduler.add_job(pCloudPlatform.auto, 'cron',minute='*/10', hour='%d-%d'%(pCloudPlatform.starthour,pCloudPlatform.endhour))
-    scheduler.add_job(pCloudPlatform.init, 'cron',hour='1',minute='5')
+    scheduler.add_job(pCloudPlatform.init, 'cron',hour='%d'%(pCloudPlatform.resethour),minute='%d'%(pCloudPlatform.resetmin))
     print('Press Ctrl+{0} to exit'.format( 'C' if os.name == 'nt' else 'Break'))
     try:
         scheduler.start()
@@ -314,6 +317,8 @@ if __name__ == '__main__':
     StartTime, EndTime = config['HyperSAS']['StartTime'],config['HyperSAS']['EndTime']
     AzimuthSensorMin = float(config['HyperSAS']['AzimuthSensorMin'])
     AzimuthSensorMax = float(config['HyperSAS']['AzimuthSensorMax'])
+    ResetTimeHour,ResetTimeMin = int(config['HyperSAS']['ResetTime'].split[':'][0]),int(config['HyperSAS']['ResetTime'].split[':'][1])
+
     print("azimuth range for sensor: %.2f, %.2f" % (AzimuthSensorMin, AzimuthSensorMax))
 
     Port, Baudrate = config['serial']['Port'], int(config['serial']['Baudrate'])
@@ -335,6 +340,7 @@ if __name__ == '__main__':
     pCloudPlatform = CloudPlatform(longitude, latitude,AzimuthSensorIni,AzimuthDelta,AzimuthSensorMin=AzimuthSensorMin,AzimuthSensorMax=AzimuthSensorMax,
                                    port=Port,baudrate=Baudrate)
     pCloudPlatform.setRuntime(StartTime,EndTime)
+    pCloudPlatform.setResettime(ResetTimeHour,ResetTimeMin)
 
     if pCloudPlatform.isRuning()==False:
         print('云台没有连接成功，请检查电源！')
