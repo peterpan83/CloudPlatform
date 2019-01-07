@@ -223,7 +223,7 @@ class CloudPlatform():
             sa = 180 - sa
 
         # AzimuthSensor = 360 - np.abs(self.AzimuthSensorIni -(sa-self.AzimuthDelta))
-        AzimuthSensor = sa - self.AzimuthDelta
+        # AzimuthSensor = sa - self.AzimuthDelta
         print("\n %s"%(now))
         AzimuthSensor = self.getIdealAzimuth(sa=sa)
         if AzimuthSensor == INVALID:
@@ -318,7 +318,7 @@ if __name__ == '__main__':
     StartTime, EndTime = config['HyperSAS']['StartTime'],config['HyperSAS']['EndTime']
     AzimuthSensorMin = float(config['HyperSAS']['AzimuthSensorMin'])
     AzimuthSensorMax = float(config['HyperSAS']['AzimuthSensorMax'])
-    ResetTimeHour,ResetTimeMin = int(config['HyperSAS']['ResetTime'].split[':'][0]),int(config['HyperSAS']['ResetTime'].split[':'][1])
+    ResetTimeHour,ResetTimeMin = int(config['HyperSAS']['ResetTime'].split(':')[0]),int(config['HyperSAS']['ResetTime'].split(':')[1])
 
     print("azimuth range for sensor: %.2f, %.2f" % (AzimuthSensorMin, AzimuthSensorMax))
 
