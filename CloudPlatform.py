@@ -136,6 +136,29 @@ class CloudPlatform():
         self.currentHorizon = self.AzimuthSensorIni
         print('云台已复位: %s'%(datetime.now()))
 
+    def reset_man(self):
+        '''
+        人工复位，根据self.currentHorizon 复位，由于 self.protocolD.resetHorizon()有不执行的问题，只能采用该方法
+        缺点是：由于Cprotocol.PAN_SPEED_DEGREE存在误差，可能会导致并没有真正复位，日积月累角度差会不断增加。
+        :return:
+        '''
+        print('云台开始复位: %s' % (datetime.now()))
+        if self.currentHorizon!=self.AzimuthSensorIni:
+            delta = self.currentHorizon - self.AzimuthSensorIni
+            self.pan_speed = 30 if abs(delta)>10 else Cprotocol.DEFAULT_PAN_SPEED
+            secs = abs(delta) / (self.pan_speed * Cprotocol.PAN_SPEED_DEGREE)
+
+            print('当前HyperSAS方位：%.2f,初始方位：%.2f,角度差：%.2f,按当前速度%.3f/s,需%s转%.3f秒。'
+                  % (self.currentHorizon, self.AzimuthSensorIni, delta, self.pan_speed * Cprotocol.PAN_SPEED_DEGREE,
+                     "左" if delta < 0 else "右", secs))
+            if delta<0:
+                self.protocolD.right(secs,self.pan_speed)
+            else:
+                self.protocolD.left(secs, self.pan_speed)
+        self.protocolD.resetHorizon() #执行最好，不执行也没办法，影响不大
+        self.currentHorizon = self.AzimuthSensorIni
+        print('云台已复位: %s' % (datetime.now()))
+
     def init(self):
         '''
         首先让云台转到初始位置，然后让传感器转到正北方向
@@ -283,9 +306,9 @@ class CloudPlatform():
 
 def autoRun(pCloudPlatform):
     scheduler = BlockingScheduler()
-    print('开始时间%d点，结束时间%d点'%(pCloudPlatform.starthour,pCloudPlatform.endhour))
+    print('开始时间%d点，结束时间%d点'%(pCloudPlatform.starthour,pCloudPlatform.endhour+1))
     scheduler.add_job(pCloudPlatform.auto, 'cron',minute='*/10', hour='%d-%d'%(pCloudPlatform.starthour,pCloudPlatform.endhour))
-    scheduler.add_job(pCloudPlatform.init, 'cron',hour='%d'%(pCloudPlatform.resethour),minute='%d'%(pCloudPlatform.resetmin))
+    scheduler.add_job(pCloudPlatform.reset_man, 'cron',hour='%d'%(pCloudPlatform.resethour),minute='%d'%(pCloudPlatform.resetmin))
     print('Press Ctrl+{0} to exit'.format( 'C' if os.name == 'nt' else 'Break'))
     try:
         scheduler.start()
