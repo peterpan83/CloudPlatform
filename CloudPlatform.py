@@ -131,6 +131,7 @@ class CloudPlatform():
             secs = 180 / (self.pan_speed * Cprotocol.PAN_SPEED_DEGREE)
             self.protocolD.left(secs,self.pan_speed)
             # print('左转了%d秒'%(secs))
+        print('云台开始复位: %s' % (datetime.now()))
         self.protocolD.resetHorizon()
         self.currentHorizon = self.AzimuthSensorIni
         print('云台已复位: %s'%(datetime.now()))
